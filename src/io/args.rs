@@ -1,9 +1,9 @@
-use std::fmt::{Debug};
-use clap::Parser;
 use crate::algorithms::Algorithm;
+use clap::Parser;
+use std::fmt::Debug;
 
 #[derive(Parser, Debug, Default)]
-#[clap(author="Author Name", version, about)]
+#[clap(author = "Author Name", version, about)]
 /// A text compressor
 pub struct Argument {
     /// name of the text file to compress
@@ -37,7 +37,6 @@ impl Argument {
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod test {

@@ -1,7 +1,7 @@
-use std::error::Error;
-use clap::Parser;
-use crate::io::{file::File, args::Argument};
+use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
+use clap::Parser;
+use std::error::Error;
 
 mod algorithms;
 mod data_structures;
@@ -20,9 +20,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut codec = io::new_codec(text, args.algorithm())?;
     codec.encode();
-    file.write(codec.compressed().as_bytes()).expect("cannot write codec to file!");
+    file.write(codec.compressed().as_bytes())
+        .expect("cannot write codec to file!");
     codec.decode();
-    file.write(codec.decompressed().as_bytes()).expect("cannot write output to file!");
+    file.write(codec.decompressed().as_bytes())
+        .expect("cannot write output to file!");
 
     // let mut rle = RLE::new(text);
     // rle.encode();

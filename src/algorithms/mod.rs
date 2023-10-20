@@ -3,14 +3,13 @@ use std::fmt::{Debug, Formatter};
 pub mod huffman;
 pub mod run_length_encoding;
 
-
 #[derive(Clone)]
 pub enum Algorithm {
     Rle,
     Huffman,
     Bwt,
     Lzw,
-    Invalid
+    Invalid,
 }
 
 impl Debug for Algorithm {
@@ -51,7 +50,7 @@ impl ToString for Algorithm {
 
 impl PartialEq for Algorithm {
     fn eq(&self, other: &Self) -> bool {
-        return self.to_string() == other.to_string()
+        return self.to_string() == other.to_string();
     }
 }
 

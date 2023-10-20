@@ -1,10 +1,10 @@
-use crate::algorithms::Algorithm;
 use crate::algorithms::huffman::Huffman;
 use crate::algorithms::run_length_encoding::Rle;
+use crate::algorithms::Algorithm;
 use crate::pkg::traits::Codec;
 
-pub mod file;
 pub mod args;
+pub mod file;
 
 // new_codec takes in an input and choice of algorithm and returns the algorithm implementation
 pub fn new_codec(text: String, algorithm: Algorithm) -> Result<Box<dyn Codec>, String> {
