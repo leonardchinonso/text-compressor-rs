@@ -62,7 +62,7 @@ mod test {
             Ok(data) => {
                 println!("File read successfully");
                 println!();
-                println!("{data}");
+                // println!("{data}");
             }
             Err(e) => {
                 panic!("{}", e);

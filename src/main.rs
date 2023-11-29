@@ -1,3 +1,6 @@
+use crate::algorithms::huffman::Huffman;
+use crate::algorithms::lempel_ziv_welch::LempelZivWelch;
+use crate::algorithms::run_length_encoding::Rle;
 use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
 use clap::Parser;
