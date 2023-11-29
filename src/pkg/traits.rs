@@ -1,3 +1,7 @@
+use crate::algorithms::huffman::Huffman;
+use crate::algorithms::run_length_encoding::Rle;
+use crate::algorithms::Algorithm;
+
 /// Codec is a public trait that holds interfaces for
 /// encoding and decoding a vector of characters.
 pub trait Codec {
