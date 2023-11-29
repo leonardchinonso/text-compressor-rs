@@ -5,6 +5,8 @@ use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
 use clap::Parser;
 use std::error::Error;
+use log::{info, LevelFilter};
+use env_logger::Builder;
 
 mod algorithms;
 mod data_structures;
@@ -13,10 +15,14 @@ mod pkg;
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
+    // initialize the logger
+    Builder::new().filter(None, LevelFilter::Info).init();
+
     let mut args = Argument::parse();
     args.validate_file_name()?;
-    // TODO: log the arguments to the console
-    println!("{:?}", args);
+
+    // log the arguments
+    info!("{:?}", args);
 
     let mut file = File::new(args.file_name().as_str(), "test_data/out_data.txt");
     let text = file.read().expect("cannot read file!");
