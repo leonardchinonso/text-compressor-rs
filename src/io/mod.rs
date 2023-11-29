@@ -1,4 +1,5 @@
 use crate::algorithms::huffman::Huffman;
+use crate::algorithms::lempel_ziv_welch::LempelZivWelch;
 use crate::algorithms::run_length_encoding::Rle;
 use crate::algorithms::Algorithm;
 use crate::pkg::traits::Codec;
@@ -12,7 +13,7 @@ pub fn new_codec(text: String, algorithm: Algorithm) -> Result<Box<dyn Codec>, S
         Algorithm::Rle => Ok(Box::new(Rle::new(text))),
         Algorithm::Huffman => Ok(Box::new(Huffman::new(text))),
         Algorithm::Bwt => unimplemented!(),
-        Algorithm::Lzw => Ok(Box::new(Huffman::new(text))),
+        Algorithm::Lzw => Ok(Box::new(LempelZivWelch::new(text))),
         Algorithm::Invalid => Err("invalid algorithm".to_string()),
     }
 }
