@@ -1,3 +1,6 @@
+use crate::algorithms::huffman::Huffman;
+use crate::algorithms::lempel_ziv_welch::LempelZivWelch;
+use crate::algorithms::run_length_encoding::Rle;
 use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
 use clap::Parser;
@@ -15,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // TODO: log the arguments to the console
     println!("{:?}", args);
 
-    let mut file = File::new(args.file_name().as_str(), "out_data.txt");
+    let mut file = File::new(args.file_name().as_str(), "test_data/out_data.txt");
     let text = file.read().expect("cannot read file!");
 
     let mut codec = io::new_codec(text, args.algorithm())?;
@@ -40,8 +43,21 @@ fn main() -> Result<(), Box<dyn Error>> {
     // file.write(huffman.decompressed().as_bytes())
     //     .expect("cannot write output to file!");
     //
+    // // read output file and compare the contents
+    // let mut file2 = File::new("out_data.txt", "");
+    // file2.read().expect("cannot read output file!");
+    // assert_eq!(file, file2);
+
+    let mut lzw = LempelZivWelch::new(text);
+    lzw.encode();
+    file.write(lzw.compressed().as_bytes())
+        .expect("cannot write codec to file!");
+    lzw.decode();
+    file.write(lzw.decompressed().as_bytes())
+        .expect("cannot write output to file!");
+
     // read output file and compare the contents
-    let mut file2 = File::new("out_data.txt", "");
+    let mut file2 = File::new("test_data/out_data.txt", "");
     file2.read().expect("cannot read output file!");
     assert_eq!(file, file2);
 
