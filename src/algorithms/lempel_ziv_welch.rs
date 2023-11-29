@@ -20,74 +20,105 @@ impl LempelZivWelch {
 
 impl Codec for LempelZivWelch {
     fn encode(&mut self) {
+        // if there is no text to process, abandon the call
+        if self.text.is_empty() {
+            return;
+        }
+
+        // use a hashmap to hold all ASCII characters for reference
         let mut size = 255_u8;
         let mut hashmap = (0..=size).fold(HashMap::new(), |mut hashmap, idx| {
             hashmap.insert((idx as char).to_string(), idx as u64);
             hashmap
         });
 
+        // transform the data to a vector of characters
+        let data = self.text.chars().collect::<Vec<char>>();
+
+        // create a pattern to hold the common substrings in the text
+        let mut pattern = data.first().unwrap().to_string();
+
+        // continuing from the last recorded ASCII character, build more repeated patterns
         let mut size = (size as u64) + 1;
-        let mut found_chars = String::new();
-        for ch in self.text.chars() {
-            let chars_to_add = format!("{}{}", found_chars, ch);
-            match hashmap.contains_key(&chars_to_add) {
-                true => {
-                    found_chars = chars_to_add;
-                }
-                false => {
-                    self.encoded
-                        .push(hashmap.get(&found_chars).unwrap().clone());
-                    size += 1;
-                    hashmap.insert(chars_to_add, size);
-                    found_chars = ch.to_string();
-                }
+        for i in 0..data.len()-1 {
+            // start a potential pattern
+            let curr_char = data[i + 1];
+
+            let mut new_pattern = pattern.clone();
+            new_pattern.push(curr_char);
+
+            // if the new pattern is in the hashmap,
+            if hashmap.contains_key(&new_pattern) {
+                // update the old pattern with the new one
+                pattern = new_pattern;
+            } else { // if the new pattern is not in the hashmap
+                // add the old pattern to the encoded result
+                self.encoded.push(hashmap.get(&pattern).unwrap().clone());
+                // put the new pattern in the hashmap with the next index available as value
+                hashmap.insert(new_pattern, size);
+                size += 1;
+                // start the pattern from the current character
+                pattern = curr_char.to_string();
             }
         }
-
-        if found_chars.is_empty() {
-            self.encoded
-                .push(hashmap.get(&found_chars).unwrap().clone());
-        }
+        self.encoded.push(hashmap.get(&pattern).unwrap().clone());
     }
 
     fn decode(&mut self) {
+        // create a hashmap of byte number to the corresponding ASCII value
         let mut size = 255_u8;
         let mut hashmap = (0..=size).fold(HashMap::new(), |mut hashmap, idx| {
             hashmap.insert(idx as u64, (idx as char).to_string());
             hashmap
         });
 
-        let mut size = (size as u64) + 1;
-        // truncation will happen as intended, self.encoded[0] will never be size 16 integer
-        let mut chs = vec![((self.encoded[0] as u8) as char)];
-        for i in 1..self.encoded.len() {
-            let code = self.encoded[i];
-            let entry = match hashmap.contains_key(&code) {
-                true => hashmap
-                    .get(&code)
-                    .unwrap()
-                    .clone()
-                    .chars()
-                    .collect::<Vec<char>>(),
-                false => {
-                    let mut v = chs.clone();
-                    v.push(chs[0]);
-                    v
+        // initialize the current encoded index with the first value from the encoded vector
+        let mut current_encoded_index = self.encoded[0];
+        let mut next_encoded_value = 0u64;
+        // get the corresponding string for the current encoded index
+        let mut current_decoded_string = hashmap.get(&current_encoded_index).unwrap().clone();
+        // get the first character of the current decoded string
+        let mut first_char_decoded_string = current_decoded_string.chars().next().unwrap().to_string();
+
+        // add the current decoded string to the output
+        self.output.push_str(current_decoded_string.as_str());
+
+        // initialize the count with the next ASCII value
+        let mut count = (size as u64) + 1;
+
+        // iterate over the encoded vector
+        for i in 0..self.encoded.len()-1 {
+            // get the next encoded value
+            next_encoded_value = self.encoded[i+1];
+            // if the next encoded value is in the hashmap, update the current decoded string
+            // else append the first character of the decoded string to the current decoded string
+            match hashmap.get(&next_encoded_value) {
+                Some(value) => {
+                    current_decoded_string = value.clone();
+                },
+                None => {
+                    current_decoded_string.push_str(&first_char_decoded_string);
                 }
-            };
-            self.output
-                .push_str(entry.iter().collect::<String>().as_str());
-            size += 1;
-            let mut new_entry = chs.iter().collect::<String>();
-            new_entry.push(entry[0]);
-            hashmap.insert(size, new_entry);
-            chs = entry;
+            }
+            // update the first character of the decoded string
+            first_char_decoded_string = current_decoded_string.chars().next().unwrap().to_string();
+            // create a new string to be inserted into the hashmap
+            let v = format!("{}{}", hashmap.get(&current_encoded_index).unwrap(), first_char_decoded_string);
+            // add the current decoded string to the output
+            self.output.push_str(&current_decoded_string);
+            // insert the new string into the hashmap
+            hashmap.insert(count, v);
+            count += 1;
+            // update the current encoded index
+            current_encoded_index = next_encoded_value;
         }
+
+        // add the last decoded string to the output
+        format!("{}{}", hashmap.get(&current_encoded_index).unwrap(), first_char_decoded_string);
     }
 
     fn compressed(&self) -> String {
-        println!("{:?}", self.encoded.clone());
-        "".to_string()
+        self.encoded.iter().map(|&num| num.to_string()).collect::<Vec<String>>().join(" ")
     }
 
     fn decompressed(&self) -> String {

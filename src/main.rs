@@ -10,7 +10,7 @@ mod io;
 mod pkg;
 
 fn main() {
-    let mut file = File::new("book1.txt", "out_data.txt");
+    let mut file = File::new("test_data/book1.txt", "test_data/out_data.txt");
     let text = file.read().expect("cannot read file!");
 
     // let mut rle = RLE::new(text);
@@ -41,7 +41,7 @@ fn main() {
         .expect("cannot write output to file!");
 
     // read output file and compare the contents
-    let mut file2 = File::new("out_data.txt", "");
+    let mut file2 = File::new("test_data/out_data.txt", "");
     file2.read().expect("cannot read output file!");
     assert_eq!(file, file2);
 }
