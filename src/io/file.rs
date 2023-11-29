@@ -54,8 +54,8 @@ impl Writer for File {
 
 #[cfg(test)]
 mod test {
-    use log::info;
     use crate::pkg::traits::{Reader, Writer};
+    use log::info;
 
     #[test]
     fn read_works() {

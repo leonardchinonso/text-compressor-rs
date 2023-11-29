@@ -1,9 +1,9 @@
 use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
 use clap::Parser;
-use std::error::Error;
-use log::{info, LevelFilter};
 use env_logger::Builder;
+use log::{info, LevelFilter};
+use std::error::Error;
 
 mod algorithms;
 mod data_structures;
