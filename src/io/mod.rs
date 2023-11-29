@@ -12,7 +12,7 @@ pub fn new_codec(text: String, algorithm: Algorithm) -> Result<Box<dyn Codec>, S
         Algorithm::Rle => Ok(Box::new(Rle::new(text))),
         Algorithm::Huffman => Ok(Box::new(Huffman::new(text))),
         Algorithm::Bwt => unimplemented!(),
-        Algorithm::Lzw => unimplemented!(),
+        Algorithm::Lzw => Ok(Box::new(Huffman::new(text))),
         Algorithm::Invalid => Err("invalid algorithm".to_string()),
     }
 }
