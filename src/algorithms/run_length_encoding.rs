@@ -27,9 +27,14 @@ impl Codec for Rle {
         let mut idx = 0_usize;
         while idx < n {
             let mut ch_count = 1;
-            while idx < n - 1 && text[idx] == text[idx + 1] {
-                ch_count += 1;
-                idx += 1;
+            while idx < n - 1 {
+                if text[idx].is_ascii_digit() {
+                    panic!("numbers not allowed for RLE!");
+                }
+                if text[idx] == text[idx + 1] {
+                    ch_count += 1;
+                    idx += 1;
+                }
             }
             self.encoded.push(text[idx]);
             self.encoded.extend(format!("{ch_count}").chars());
@@ -39,6 +44,7 @@ impl Codec for Rle {
 
     /// decode decompresses a given compressed text to get the original text
     fn decode(&mut self) {
+        const MAX_COUNT: usize = 1024;
         let code = self.encoded.chars().collect::<Vec<char>>();
         let n = code.len();
         let mut idx = 0_usize;

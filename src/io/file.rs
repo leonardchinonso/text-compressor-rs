@@ -39,6 +39,7 @@ impl Reader for File {
     fn read(&mut self) -> Result<String, Box<dyn Error>> {
         let content = fs::read_to_string(self.in_path.clone())?;
         self.content = content.clone();
+        // println!("{:?} -- OUT", self.content);
         Ok(content)
     }
 }
@@ -53,6 +54,7 @@ impl Writer for File {
 
 #[cfg(test)]
 mod test {
+    use log::info;
     use crate::pkg::traits::{Reader, Writer};
 
     #[test]
@@ -60,9 +62,7 @@ mod test {
         let mut file = super::File::new("test_data.txt", "out_data.txt");
         match file.read() {
             Ok(data) => {
-                println!("File read successfully");
-                println!();
-                // println!("{data}");
+                info!("File read successfully");
             }
             Err(e) => {
                 panic!("{}", e);
