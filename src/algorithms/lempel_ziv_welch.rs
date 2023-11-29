@@ -40,7 +40,7 @@ impl Codec for LempelZivWelch {
 
         // continuing from the last recorded ASCII character, build more repeated patterns
         let mut size = (size as u64) + 1;
-        for i in 0..data.len()-1 {
+        for i in 0..data.len() - 1 {
             // start a potential pattern
             let curr_char = data[i + 1];
 
@@ -51,7 +51,8 @@ impl Codec for LempelZivWelch {
             if hashmap.contains_key(&new_pattern) {
                 // update the old pattern with the new one
                 pattern = new_pattern;
-            } else { // if the new pattern is not in the hashmap
+            } else {
+                // if the new pattern is not in the hashmap
                 // add the old pattern to the encoded result
                 self.encoded.push(hashmap.get(&pattern).unwrap().clone());
                 // put the new pattern in the hashmap with the next index available as value
@@ -78,7 +79,8 @@ impl Codec for LempelZivWelch {
         // get the corresponding string for the current encoded index
         let mut current_decoded_string = hashmap.get(&current_encoded_index).unwrap().clone();
         // get the first character of the current decoded string
-        let mut first_char_decoded_string = current_decoded_string.chars().next().unwrap().to_string();
+        let mut first_char_decoded_string =
+            current_decoded_string.chars().next().unwrap().to_string();
 
         // add the current decoded string to the output
         self.output.push_str(current_decoded_string.as_str());
@@ -87,15 +89,15 @@ impl Codec for LempelZivWelch {
         let mut count = (size as u64) + 1;
 
         // iterate over the encoded vector
-        for i in 0..self.encoded.len()-1 {
+        for i in 0..self.encoded.len() - 1 {
             // get the next encoded value
-            next_encoded_value = self.encoded[i+1];
+            next_encoded_value = self.encoded[i + 1];
             // if the next encoded value is in the hashmap, update the current decoded string
             // else append the first character of the decoded string to the current decoded string
             match hashmap.get(&next_encoded_value) {
                 Some(value) => {
                     current_decoded_string = value.clone();
-                },
+                }
                 None => {
                     current_decoded_string.push_str(&first_char_decoded_string);
                 }
@@ -103,7 +105,11 @@ impl Codec for LempelZivWelch {
             // update the first character of the decoded string
             first_char_decoded_string = current_decoded_string.chars().next().unwrap().to_string();
             // create a new string to be inserted into the hashmap
-            let v = format!("{}{}", hashmap.get(&current_encoded_index).unwrap(), first_char_decoded_string);
+            let v = format!(
+                "{}{}",
+                hashmap.get(&current_encoded_index).unwrap(),
+                first_char_decoded_string
+            );
             // add the current decoded string to the output
             self.output.push_str(&current_decoded_string);
             // insert the new string into the hashmap
@@ -114,11 +120,19 @@ impl Codec for LempelZivWelch {
         }
 
         // add the last decoded string to the output
-        format!("{}{}", hashmap.get(&current_encoded_index).unwrap(), first_char_decoded_string);
+        format!(
+            "{}{}",
+            hashmap.get(&current_encoded_index).unwrap(),
+            first_char_decoded_string
+        );
     }
 
     fn compressed(&self) -> String {
-        self.encoded.iter().map(|&num| num.to_string()).collect::<Vec<String>>().join(" ")
+        self.encoded
+            .iter()
+            .map(|&num| num.to_string())
+            .collect::<Vec<String>>()
+            .join(" ")
     }
 
     fn decompressed(&self) -> String {
