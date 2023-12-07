@@ -31,11 +31,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     codec.decode();
     file.write(codec.decompressed().as_bytes())
         .expect("cannot write output to file!");
-    //
-    // // read output file and compare the contents
-    // let mut file2 = File::new("test_data/out_data.txt", "");
-    // file2.read().expect("cannot read output file!");
-    // assert_eq!(file, file2);
+
+    // read output file and compare the contents
+    let mut file2 = File::new("test_data/out_data.txt", "");
+    file2.read().expect("cannot read output file!");
+    assert_eq!(file, file2);
 
     Ok(())
 }

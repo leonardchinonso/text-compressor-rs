@@ -39,7 +39,6 @@ impl Reader for File {
     fn read(&mut self) -> Result<String, Box<dyn Error>> {
         let content = fs::read_to_string(self.in_path.clone())?;
         self.content = content.clone();
-        // println!("{:?} -- OUT", self.content);
         Ok(content)
     }
 }

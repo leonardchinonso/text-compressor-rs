@@ -26,7 +26,7 @@ impl Codec for LempelZivWelch {
         }
 
         // use a hashmap to hold all ASCII characters for reference
-        let mut size = 255_u8;
+        let size = 255_u8;
         let mut hashmap = (0..=size).fold(HashMap::new(), |mut hashmap, idx| {
             hashmap.insert((idx as char).to_string(), idx as u64);
             hashmap
@@ -75,7 +75,6 @@ impl Codec for LempelZivWelch {
 
         // initialize the current encoded index with the first value from the encoded vector
         let mut current_encoded_index = self.encoded[0];
-        let mut next_encoded_value = 0u64;
         // get the corresponding string for the current encoded index
         let mut current_decoded_string = hashmap.get(&current_encoded_index).unwrap().clone();
         // get the first character of the current decoded string
@@ -91,7 +90,7 @@ impl Codec for LempelZivWelch {
         // iterate over the encoded vector
         for i in 0..self.encoded.len() - 1 {
             // get the next encoded value
-            next_encoded_value = self.encoded[i + 1];
+            let next_encoded_value = self.encoded[i + 1];
             // if the next encoded value is in the hashmap, update the current decoded string
             // else append the first character of the decoded string to the current decoded string
             match hashmap.get(&next_encoded_value) {

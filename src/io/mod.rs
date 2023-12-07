@@ -1,3 +1,4 @@
+use crate::algorithms::burrows_wheeler_transform::quadratic_log;
 use crate::algorithms::huffman::Huffman;
 use crate::algorithms::lempel_ziv_welch::LempelZivWelch;
 use crate::algorithms::run_length_encoding::Rle;
@@ -12,7 +13,7 @@ pub fn new_codec(text: String, algorithm: Algorithm) -> Result<Box<dyn Codec>, S
     match algorithm {
         Algorithm::Rle => Ok(Box::new(Rle::new(text))),
         Algorithm::Huffman => Ok(Box::new(Huffman::new(text))),
-        Algorithm::Bwt => unimplemented!(),
+        Algorithm::Bwt => Ok(Box::new(quadratic_log::BurrowsWheelerTransform::new(text))),
         Algorithm::Lzw => Ok(Box::new(LempelZivWelch::new(text))),
         Algorithm::Invalid => Err("invalid algorithm".to_string()),
     }
