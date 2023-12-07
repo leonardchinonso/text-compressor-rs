@@ -54,15 +54,14 @@ impl Writer for File {
 #[cfg(test)]
 mod test {
     use crate::pkg::traits::{Reader, Writer};
+    use log::info;
 
     #[test]
     fn read_works() {
         let mut file = super::File::new("test_data.txt", "out_data.txt");
         match file.read() {
             Ok(data) => {
-                println!("File read successfully");
-                println!();
-                // println!("{data}");
+                info!("File read successfully");
             }
             Err(e) => {
                 panic!("{}", e);

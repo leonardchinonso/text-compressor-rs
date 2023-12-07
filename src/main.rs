@@ -1,12 +1,9 @@
-use crate::algorithms::huffman::Huffman;
-use crate::algorithms::lempel_ziv_welch::LempelZivWelch;
-use crate::algorithms::run_length_encoding::Rle;
 use crate::io::{args::Argument, file::File};
 use crate::pkg::traits::{Codec, Reader, Writer};
 use clap::Parser;
-use std::error::Error;
-use log::{info, LevelFilter};
 use env_logger::Builder;
+use log::{info, LevelFilter};
+use std::error::Error;
 
 mod algorithms;
 mod data_structures;
@@ -24,7 +21,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // log the arguments
     info!("{:?}", args);
 
-    let mut file = File::new(args.file_name().as_str(), "test_data/out_data.txt");
+    let mut file = File::new(&args.file_name(), "test_data/out_data.txt");
     let text = file.read().expect("cannot read file!");
 
     let mut codec = io::new_codec(text, args.algorithm())?;
