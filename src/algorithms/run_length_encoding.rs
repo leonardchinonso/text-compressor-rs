@@ -1,18 +1,27 @@
 use crate::pkg::traits::Codec;
 
+#[derive(Debug)]
+struct RlePart(u8, u64);
+
+impl ToString for RlePart {
+    fn to_string(&self) -> String {
+        (self.0 as char).to_string().repeat(self.1 as usize)
+    }
+}
+
 /// RLE is the zero product struct for the RUN LENGTH ENCODING algorithm
 pub struct Rle {
-    input: String,
-    encoded: String,
-    output: String,
+    text: String,
+    encoded: Vec<RlePart>,
+    decoded: String,
 }
 
 impl Rle {
     pub fn new(text: String) -> Self {
         Self {
-            input: text,
-            encoded: String::new(),
-            output: String::new(),
+            text,
+            encoded: Vec::new(),
+            decoded: String::new(),
         }
     }
 }
@@ -21,58 +30,38 @@ impl Rle {
 impl Codec for Rle {
     /// encode compresses a given list of text characters to get a smaller size
     fn encode(&mut self) {
-        let text = self.input.chars().collect::<Vec<char>>();
-        let n = text.len();
-        self.encoded = String::with_capacity(n);
-        let mut idx = 0_usize;
-        while idx < n {
-            let mut ch_count = 1;
-            while idx < n - 1 {
-                if text[idx].is_ascii_digit() {
-                    panic!("numbers not allowed for RLE!");
-                }
-                if text[idx] == text[idx + 1] {
-                    ch_count += 1;
-                    idx += 1;
-                }
+        let n = self.text.len();
+        let text_chars = self.text.chars().collect::<Vec<char>>();
+
+        let mut i = 0usize;
+        while i < n {
+            let mut char_count = 1u64;
+            while i < n - 1 && text_chars[i] == text_chars[i+1] {
+                char_count += 1;
+                i += 1;
             }
-            self.encoded.push(text[idx]);
-            self.encoded.extend(format!("{ch_count}").chars());
-            idx += 1;
+            self.encoded.push(RlePart(text_chars[i] as u8, char_count));
+            i += 1;
         }
     }
 
     /// decode decompresses a given compressed text to get the original text
     fn decode(&mut self) {
-        const MAX_COUNT: usize = 1024;
-        let code = self.encoded.chars().collect::<Vec<char>>();
-        let n = code.len();
-        let mut idx = 0_usize;
-        let mut digit_str = String::new();
-        let mut last_letter_idx = 0_usize;
-        while idx < n {
-            while idx < n && code[idx].is_ascii_digit() {
-                digit_str.push(code[idx]);
-                idx += 1;
-            }
-            if !digit_str.is_empty() {
-                let count = digit_str.parse::<usize>().unwrap();
-                let s = String::from(code[last_letter_idx]);
-                self.output.push_str(&s.repeat(count));
-                digit_str.clear();
-            } else {
-                last_letter_idx = idx;
-                idx += 1;
-            }
+        for part in self.encoded.iter() {
+            self.decoded.push_str(part.to_string().as_str());
         }
     }
 
     fn compressed(&self) -> String {
-        self.encoded.clone()
+        let mut s = String::new();
+        for part in self.encoded.iter() {
+            s.push_str(format!("{part:?}").as_str());
+        }
+        s
     }
 
     fn decompressed(&self) -> String {
-        self.output.clone()
+        self.decoded.clone()
     }
 }
 
@@ -83,9 +72,9 @@ mod tests {
     #[test]
     fn encoder_works() {
         let test_cases = vec![
-            ("abracadabra!", "a1b1r1a1c1a1d1a1b1r1a1!1"),
-            ("aabbc", "a2b2c1"),
-            ("aaaaaaaaaa", "a10"),
+            ("abracadabra!", "RlePart(97, 1)RlePart(98, 1)RlePart(114, 1)RlePart(97, 1)RlePart(99, 1)RlePart(97, 1)RlePart(100, 1)RlePart(97, 1)RlePart(98, 1)RlePart(114, 1)RlePart(97, 1)RlePart(33, 1)"),
+            ("aabbc", "RlePart(97, 2)RlePart(98, 2)RlePart(99, 1)"),
+            ("aaaaaaaaaa", "RlePart(97, 10)"),
         ];
 
         for test_case in test_cases {
@@ -97,18 +86,13 @@ mod tests {
 
     #[test]
     fn decoder_works() {
-        let test_cases = vec![
-            ("abracadabra!", "a1b1r1a1c1a1d1a1b1r1a1!1", "abracadabra!"),
-            ("aabbc", "a2b2c1", "aabbc"),
-            ("aaaaaaaaaa", "a10", "aaaaaaaaaa"),
-        ];
+        let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaaaa"];
 
         for test_case in test_cases {
-            let mut rle = super::Rle::new(test_case.0.to_string());
+            let mut rle = super::Rle::new(test_case.to_string());
             rle.encode();
-            assert_eq!(rle.compressed(), test_case.1);
             rle.decode();
-            assert_eq!(rle.decompressed(), test_case.2);
+            assert_eq!(rle.decompressed(), test_case);
         }
     }
 }

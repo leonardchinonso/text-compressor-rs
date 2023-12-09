@@ -12,7 +12,7 @@ pub struct Huffman {
     char_frequencies: HashMap<char, i32>,
     char_encodings: HashMap<char, String>,
     encoded: String,
-    output: String,
+    decoded: String,
 }
 
 impl Huffman {
@@ -23,7 +23,7 @@ impl Huffman {
             char_frequencies: Default::default(),
             char_encodings: Default::default(),
             encoded: String::new(),
-            output: String::new(),
+            decoded: String::new(),
         };
 
         huffman.populate_char_frequencies();
@@ -94,7 +94,7 @@ impl Codec for Huffman {
                 .unwrap();
 
                 if curr_node.borrow().is_leaf() {
-                    self.output
+                    self.decoded
                         .push(curr_node.borrow().get_character().unwrap());
                     curr_node = self.root.clone().unwrap();
                 }
@@ -107,7 +107,7 @@ impl Codec for Huffman {
     }
 
     fn decompressed(&self) -> String {
-        self.output.clone()
+        self.decoded.clone()
     }
 }
 
@@ -133,7 +133,7 @@ mod tests {
             let mut huffman = Huffman::new(test_case.to_string());
             huffman.encode();
             huffman.decode();
-            assert_eq!(huffman.output, test_case.to_string());
+            assert_eq!(huffman.decoded, test_case.to_string());
         }
     }
 }

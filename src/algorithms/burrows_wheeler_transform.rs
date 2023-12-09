@@ -19,7 +19,7 @@ pub mod quadratic_log {
         suffix_indices: Vec<usize>,
         encoded: String,
         original_pos: usize,
-        output: String,
+        decoded: String,
     }
 
     impl BurrowsWheelerTransform {
@@ -37,7 +37,7 @@ pub mod quadratic_log {
                 suffix_indices: Vec::with_capacity(n),
                 encoded: String::new(),
                 original_pos: 0,
-                output: String::new(),
+                decoded: String::new(),
             }
         }
 
@@ -109,9 +109,9 @@ pub mod quadratic_log {
                 decoded[encoded_len - 1 - i] = encoded_vector[curr_start_pos];
             }
 
-            self.output = decoded.iter().rev().collect::<String>();
+            self.decoded = decoded.iter().rev().collect::<String>();
             // pop the '$' we added
-            self.output.pop();
+            self.decoded.pop();
         }
     }
 
@@ -133,7 +133,7 @@ pub mod quadratic_log {
         }
 
         fn decompressed(&self) -> String {
-            self.output.clone()
+            self.decoded.clone()
         }
     }
 }
