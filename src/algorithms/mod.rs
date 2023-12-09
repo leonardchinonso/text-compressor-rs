@@ -10,6 +10,7 @@ pub enum Algorithm {
     Huffman,
     Bwt,
     Lzw,
+    All,
     Invalid,
 }
 
@@ -32,6 +33,7 @@ impl From<String> for Algorithm {
             "huffman" => Algorithm::Huffman,
             "bwt" => Algorithm::Bwt,
             "lzw" => Algorithm::Lzw,
+            "all" => Algorithm::All,
             _ => Algorithm::Invalid,
         }
     }
@@ -44,6 +46,7 @@ impl ToString for Algorithm {
             Algorithm::Huffman => "Huffman".to_string(),
             Algorithm::Bwt => "BWT".to_string(),
             Algorithm::Lzw => "LZW".to_string(),
+            Algorithm::All => "ALL".to_string(),
             Algorithm::Invalid => "invalid".to_string(),
         }
     }
@@ -71,6 +74,7 @@ mod test {
             (Algorithm::Rle, "RLE"),
             (Algorithm::Huffman, "Huffman"),
             (Algorithm::Bwt, "BWT"),
+            (Algorithm::All, "ALL"),
             (Algorithm::Lzw, "LZW"),
             (Algorithm::Invalid, "invalid"),
         ];
@@ -95,6 +99,9 @@ mod test {
             ("lzW", Algorithm::Lzw),
             ("lzw", Algorithm::Lzw),
             ("LZw", Algorithm::Lzw),
+            ("All", Algorithm::All),
+            ("aLl", Algorithm::All),
+            ("alL", Algorithm::All),
         ];
 
         for test_case in test_cases {

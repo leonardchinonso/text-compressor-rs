@@ -5,7 +5,7 @@ use std::collections::HashMap;
 pub struct LempelZivWelch {
     text: String,
     encoded: Vec<u64>,
-    output: String,
+    decoded: String,
 }
 
 impl LempelZivWelch {
@@ -13,7 +13,7 @@ impl LempelZivWelch {
         Self {
             text,
             encoded: Vec::new(),
-            output: String::new(),
+            decoded: String::new(),
         }
     }
 }
@@ -82,7 +82,7 @@ impl Codec for LempelZivWelch {
             current_decoded_string.chars().next().unwrap().to_string();
 
         // add the current decoded string to the output
-        self.output.push_str(current_decoded_string.as_str());
+        self.decoded.push_str(current_decoded_string.as_str());
 
         // initialize the count with the next ASCII value
         let mut count = (size as u64) + 1;
@@ -110,7 +110,7 @@ impl Codec for LempelZivWelch {
                 first_char_decoded_string
             );
             // add the current decoded string to the output
-            self.output.push_str(&current_decoded_string);
+            self.decoded.push_str(&current_decoded_string);
             // insert the new string into the hashmap
             hashmap.insert(count, v);
             count += 1;
@@ -135,6 +135,6 @@ impl Codec for LempelZivWelch {
     }
 
     fn decompressed(&self) -> String {
-        self.output.clone()
+        self.decoded.clone()
     }
 }

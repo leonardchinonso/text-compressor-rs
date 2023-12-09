@@ -2,15 +2,15 @@ use crate::algorithms::Algorithm;
 use clap::Parser;
 use std::fmt::Debug;
 
-#[derive(Parser, Debug, Default)]
+#[derive(Parser, Debug, Default, Clone)]
 #[clap(author = "Author Name", version, about)]
 /// A text compressor
 pub struct Argument {
     /// name of the text file to compress
     file_name: String,
-    /// algorithm to use, can be: rle, huffman, bwt, lzw.
-    #[clap(short, long, default_value_t=Algorithm::from(String::from("huffman")))]
-    algorithm: Algorithm,
+    /// multi-thread support. It is false by default
+    #[clap(short, long, action)]
+    multithread: bool
 }
 
 impl Argument {
@@ -18,8 +18,8 @@ impl Argument {
         self.file_name.clone()
     }
 
-    pub fn algorithm(&self) -> Algorithm {
-        self.algorithm.clone()
+    pub fn is_multithread_on(&self) -> bool {
+        self.multithread
     }
 
     /// validate_file_name checks that the file name is a valid one and eats whitespaces
@@ -46,13 +46,14 @@ mod test {
     fn parsing_argument_works() {
         let file_name = "dummy.txt".to_string();
         let algorithm = Algorithm::Bwt;
+        let multithread = true;
 
         let args = Argument {
             file_name: file_name.clone(),
-            algorithm: algorithm.clone(),
+            multithread,
         };
 
         assert_eq!(args.file_name, file_name);
-        assert_eq!(args.algorithm, algorithm);
+        assert_eq!(args.multithread, multithread);
     }
 }

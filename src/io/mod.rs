@@ -15,6 +15,6 @@ pub fn new_codec(text: String, algorithm: Algorithm) -> Result<Box<dyn Codec>, S
         Algorithm::Huffman => Ok(Box::new(Huffman::new(text))),
         Algorithm::Bwt => Ok(Box::new(quadratic_log::BurrowsWheelerTransform::new(text))),
         Algorithm::Lzw => Ok(Box::new(LempelZivWelch::new(text))),
-        Algorithm::Invalid => Err("invalid algorithm".to_string()),
+        _ => Err("invalid algorithm".to_string()),
     }
 }
