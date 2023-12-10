@@ -10,7 +10,7 @@ pub struct Argument {
     file_name: String,
     /// multi-thread support. It is false by default
     #[clap(short, long, action)]
-    multithread: bool
+    multithread: bool,
 }
 
 impl Argument {
@@ -18,7 +18,7 @@ impl Argument {
         self.file_name.clone()
     }
 
-    pub fn is_multithread_on(&self) -> bool {
+    pub fn should_multithread(&self) -> bool {
         self.multithread
     }
 

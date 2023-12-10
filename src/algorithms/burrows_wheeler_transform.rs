@@ -14,6 +14,7 @@ pub mod quadratic_log {
     }
 
     /// BurrowsWheelerTransform represents a struct for the BWT compression algorithm
+    #[derive(Clone)]
     pub struct BurrowsWheelerTransform {
         text: String,
         suffix_indices: Vec<usize>,
