@@ -1,35 +1,20 @@
-use std::error::Error;
-use std::sync::{Arc, mpsc, Mutex};
-use std::thread;
-use crate::algorithms::Algorithm;
-use crate::io::{
-    self,
-    args::Argument,
-    file::File
+use crate::{
+    algorithms::Algorithm, io::new_codec, models::compression_metric::CompressionMetric,
+    models::part::Part, utils::utils::split_into_parts,
 };
-use crate::models::part::Part;
-use crate::models::response::Response;
-use crate::pkg::traits::Reader;
-use crate::utils::utils::split_into_parts;
-
-
-pub fn benchmark_algorithms(args: Argument) -> Result<Vec<Response>, Box<dyn Error>> {
-    let mut file = File::new(&args.file_name(), "test_data/out_data.txt");
-    let text = file.read().expect("cannot read file!");
-
-    let algorithms = [Algorithm::Huffman, Algorithm::Lzw, Algorithm::Bwt, Algorithm::Rle];
-    let mut responses: Vec<Response> = vec![Response::build(); algorithms.len()];
-
-    algorithms.into_iter().enumerate().for_each(|(i, a)| {
-        responses[i] = compute_algorithm(text.clone(), a).unwrap();
-    });
-
-    Ok(responses)
-}
+use std::error::Error;
+use std::sync::{mpsc, Arc, Mutex};
+use std::thread;
+use std::time::Instant;
 
 // TODO: Add benchmarking
 /// compute_algorithm benchmarks how long a particular algorithm took to run
-fn compute_algorithm(text: String, algorithm: Algorithm) -> Result<Response, Box<dyn Error>> {
+pub fn compute_algorithm(
+    text: String,
+    algorithm: Algorithm,
+) -> Result<CompressionMetric, Box<dyn Error>> {
+    // start the timer for benchmarking the time spent
+    let start_time = Instant::now();
     let parts = split_into_parts(text);
 
     // create channels for sending the compressed and decompressed data among threads
@@ -47,15 +32,19 @@ fn compute_algorithm(text: String, algorithm: Algorithm) -> Result<Response, Box
         let algo = algorithm.clone();
 
         let handle = thread::spawn(move || {
-            let mut codec = io::new_codec(part.1.clone(), algo).unwrap();
+            let mut codec = new_codec(part.1.clone(), algo).unwrap();
 
             // encode the text part and send the compressed data to the compressed channel
             codec.encode();
-            compressed_tx_clone.send(Part(part.0, codec.compressed())).unwrap();
+            compressed_tx_clone
+                .send(Part(part.0, codec.compressed()))
+                .unwrap();
 
             // decode the encoded part and send the decompressed data to the decompressed channel
             codec.decode();
-            decompressed_tx_clone.send(Part(part.0, codec.decompressed())).unwrap();
+            decompressed_tx_clone
+                .send(Part(part.0, codec.decompressed()))
+                .unwrap();
         });
         handles.push(handle);
     }
@@ -65,8 +54,8 @@ fn compute_algorithm(text: String, algorithm: Algorithm) -> Result<Response, Box
     drop(decompressed_tx);
 
     // create the encoded and decoded results
-    let mut decoded_result = Arc::new(Mutex::new(Vec::new()));
-    let mut encoded_result = Arc::new(Mutex::new(Vec::new()));
+    let decoded_result = Arc::new(Mutex::new(Vec::new()));
+    let encoded_result = Arc::new(Mutex::new(Vec::new()));
 
     // clone the results to send across the threads
     let shared_decoded_result = Arc::clone(&decoded_result);
@@ -93,18 +82,23 @@ fn compute_algorithm(text: String, algorithm: Algorithm) -> Result<Response, Box
     // Wait for the aggregator thread to finish
     aggregator_handle.join().unwrap();
 
-    let mut response = Response::build();
-
     let mut encoded_result = encoded_result.lock().unwrap();
     encoded_result.sort_by(|a, b| a.0.cmp(&b.0));
-    let encoded_result = encoded_result.iter().map(|p| p.1.clone()).collect::<Vec<String>>().join("");
+    let encoded_result = encoded_result
+        .iter()
+        .map(|p| p.1.clone())
+        .collect::<Vec<String>>()
+        .join("");
 
     let mut decoded_result = decoded_result.lock().unwrap();
     decoded_result.sort_by(|a, b| a.0.cmp(&b.0));
-    let decoded_result = decoded_result.iter().map(|p| p.1.clone()).collect::<Vec<String>>().join("");
+    let decoded_result = decoded_result
+        .iter()
+        .map(|p| p.1.clone())
+        .collect::<Vec<String>>()
+        .join("");
 
-    response.set_encoded(encoded_result);
-    response.set_decoded(decoded_result);
+    let mut metric = CompressionMetric::new(algorithm, encoded_result, decoded_result, start_time);
 
-    Ok(response)
+    Ok(metric)
 }

@@ -1,22 +1,28 @@
 use crate::pkg::traits::Codec;
+use std::fmt::Display;
 
-#[derive(Debug)]
-struct RlePart(u8, u64);
+#[derive(Debug, Clone)]
+struct RunLengthEncodingPart(u8, u64);
 
-impl ToString for RlePart {
-    fn to_string(&self) -> String {
-        (self.0 as char).to_string().repeat(self.1 as usize)
+impl Display for RunLengthEncodingPart {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            (self.0 as char).to_string().repeat(self.1 as usize)
+        )
     }
 }
 
 /// RLE is the zero product struct for the RUN LENGTH ENCODING algorithm
-pub struct Rle {
+#[derive(Clone)]
+pub struct RunLengthEncoding {
     text: String,
-    encoded: Vec<RlePart>,
+    encoded: Vec<RunLengthEncodingPart>,
     decoded: String,
 }
 
-impl Rle {
+impl RunLengthEncoding {
     pub fn new(text: String) -> Self {
         Self {
             text,
@@ -27,7 +33,7 @@ impl Rle {
 }
 
 /// Codec trait implementation for the RLE algorithm
-impl Codec for Rle {
+impl Codec for RunLengthEncoding {
     /// encode compresses a given list of text characters to get a smaller size
     fn encode(&mut self) {
         let n = self.text.len();
@@ -36,11 +42,12 @@ impl Codec for Rle {
         let mut i = 0usize;
         while i < n {
             let mut char_count = 1u64;
-            while i < n - 1 && text_chars[i] == text_chars[i+1] {
+            while i < n - 1 && text_chars[i] == text_chars[i + 1] {
                 char_count += 1;
                 i += 1;
             }
-            self.encoded.push(RlePart(text_chars[i] as u8, char_count));
+            self.encoded
+                .push(RunLengthEncodingPart(text_chars[i] as u8, char_count));
             i += 1;
         }
     }
@@ -78,7 +85,7 @@ mod tests {
         ];
 
         for test_case in test_cases {
-            let mut rle = super::Rle::new(test_case.0.to_string());
+            let mut rle = super::RunLengthEncoding::new(test_case.0.to_string());
             rle.encode();
             assert_eq!(rle.compressed(), test_case.1);
         }
@@ -89,7 +96,7 @@ mod tests {
         let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaaaa"];
 
         for test_case in test_cases {
-            let mut rle = super::Rle::new(test_case.to_string());
+            let mut rle = super::RunLengthEncoding::new(test_case.to_string());
             rle.encode();
             rle.decode();
             assert_eq!(rle.decompressed(), test_case);

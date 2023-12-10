@@ -1,2 +1,2 @@
+pub mod compression_metric;
 pub mod part;
-pub mod response;

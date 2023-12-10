@@ -1,15 +1,18 @@
-use std::fmt::{Debug, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
+pub mod burrows_wheeler_run_length;
 pub mod burrows_wheeler_transform;
 pub mod huffman;
 pub mod lempel_ziv_welch;
 pub mod run_length_encoding;
+
 #[derive(Clone)]
 pub enum Algorithm {
     Rle,
     Huffman,
     Bwt,
     Lzw,
+    BwtRle,
     All,
     Invalid,
 }
@@ -33,22 +36,25 @@ impl From<String> for Algorithm {
             "huffman" => Algorithm::Huffman,
             "bwt" => Algorithm::Bwt,
             "lzw" => Algorithm::Lzw,
+            "bwtrle" => Algorithm::BwtRle,
             "all" => Algorithm::All,
             _ => Algorithm::Invalid,
         }
     }
 }
 
-impl ToString for Algorithm {
-    fn to_string(&self) -> String {
-        match self {
+impl Display for Algorithm {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let str = match self {
             Algorithm::Rle => "RLE".to_string(),
             Algorithm::Huffman => "Huffman".to_string(),
             Algorithm::Bwt => "BWT".to_string(),
             Algorithm::Lzw => "LZW".to_string(),
+            Algorithm::BwtRle => "BWTRLE".to_string(),
             Algorithm::All => "ALL".to_string(),
             Algorithm::Invalid => "invalid".to_string(),
-        }
+        };
+        write!(f, "{}", str)
     }
 }
 
@@ -99,6 +105,9 @@ mod test {
             ("lzW", Algorithm::Lzw),
             ("lzw", Algorithm::Lzw),
             ("LZw", Algorithm::Lzw),
+            ("bwtRLe", Algorithm::BwtRle),
+            ("BwtRle", Algorithm::BwtRle),
+            ("BWTrle", Algorithm::BwtRle),
             ("All", Algorithm::All),
             ("aLl", Algorithm::All),
             ("alL", Algorithm::All),
