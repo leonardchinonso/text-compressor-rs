@@ -1,6 +1,6 @@
-use crate::algorithms::Algorithm;
-use crate::io::new_codec;
-use crate::models::compression_metric::CompressionMetric;
+use crate::service::{
+    algorithms::Algorithm, io::new_codec, models::compression_metric::CompressionMetric,
+};
 use std::error::Error;
 use std::time::Instant;
 

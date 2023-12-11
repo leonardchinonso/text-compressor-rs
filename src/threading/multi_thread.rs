@@ -1,13 +1,13 @@
-use crate::{
+use crate::service::{
     algorithms::Algorithm, io::new_codec, models::compression_metric::CompressionMetric,
-    models::part::Part, utils::utils::split_into_parts,
+    models::part::Part,
 };
+use crate::utils::utils::split_into_parts;
 use std::error::Error;
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Instant;
 
-// TODO: Add benchmarking
 /// compute_algorithm benchmarks how long a particular algorithm took to run
 pub fn compute_algorithm(
     text: String,
@@ -98,7 +98,7 @@ pub fn compute_algorithm(
         .collect::<Vec<String>>()
         .join("");
 
-    let mut metric = CompressionMetric::new(algorithm, encoded_result, decoded_result, start_time);
+    let metric = CompressionMetric::new(algorithm, encoded_result, decoded_result, start_time);
 
     Ok(metric)
 }

@@ -1,4 +1,4 @@
-use crate::models::part::Part;
+use crate::service::models::part::Part;
 
 pub fn split_into_parts(text: String) -> Vec<Part> {
     let n = text.len();

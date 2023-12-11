@@ -1,4 +1,4 @@
-use crate::pkg::traits::Codec;
+use crate::service::pkg::traits::Codec;
 use std::collections::HashMap;
 
 /// LempelZivWelch represents a struct for the LZW compression algorithm

@@ -1,6 +1,10 @@
-use crate::data_structures::huffman_node::{HuffmanLeaf, HuffmanNode, Link, Node};
-use crate::data_structures::priority_queue::Heap;
-use crate::pkg::traits::Codec;
+use crate::service::{
+    data_structures::{
+        huffman_node::{HuffmanLeaf, HuffmanNode, Link, Node},
+        priority_queue::Heap,
+    },
+    pkg::traits::Codec
+};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;

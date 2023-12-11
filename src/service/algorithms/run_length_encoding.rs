@@ -1,4 +1,4 @@
-use crate::pkg::traits::Codec;
+use crate::service::pkg::traits::Codec;
 use std::fmt::Display;
 
 #[derive(Debug, Clone)]
@@ -74,7 +74,7 @@ impl Codec for RunLengthEncoding {
 
 #[cfg(test)]
 mod tests {
-    use crate::pkg::traits::Codec;
+    use crate::service::pkg::traits::Codec;
 
     #[test]
     fn encoder_works() {
