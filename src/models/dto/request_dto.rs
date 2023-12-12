@@ -1,7 +1,7 @@
-use std::time::Duration;
-use serde::{Deserialize, Serialize};
 use crate::errors::app_error::{AppError, ErrorKind};
-use crate::service::models::compression_metric::CompressionMetric;
+use crate::models::compression_metric::CompressionMetric;
+use serde::{Deserialize, Serialize};
+use std::time::Duration;
 
 // CompressRequest represents the request for compressing a string
 #[derive(Deserialize)]

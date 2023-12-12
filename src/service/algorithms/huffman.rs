@@ -3,7 +3,7 @@ use crate::service::{
         huffman_node::{HuffmanLeaf, HuffmanNode, Link, Node},
         priority_queue::Heap,
     },
-    pkg::traits::Codec
+    pkg::traits::Codec,
 };
 use std::cell::RefCell;
 use std::collections::HashMap;

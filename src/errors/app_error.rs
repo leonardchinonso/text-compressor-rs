@@ -1,8 +1,7 @@
-use std::error::Error;
-use std::fmt;
 use actix_web::HttpResponse;
 use serde::Serialize;
-
+use std::error::Error;
+use std::fmt;
 
 #[derive(Debug, Serialize)]
 pub enum ErrorKind {

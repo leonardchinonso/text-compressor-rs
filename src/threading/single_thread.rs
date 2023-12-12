@@ -1,17 +1,15 @@
-use crate::service::{
-    algorithms::Algorithm, io::new_codec, models::compression_metric::CompressionMetric,
+use crate::{
+    models::compression_metric::CompressionMetric,
+    service::{algorithms::Algorithm, io::new_codec},
 };
 use std::error::Error;
 use std::time::Instant;
 
 /// compute_algorithm benchmarks how long a particular algorithm took to run
-pub fn compute_algorithm(
-    text: String,
-    algorithm: Algorithm,
-) -> Result<CompressionMetric, Box<dyn Error>> {
+pub fn compute_algorithm(text: String, algorithm: Algorithm) -> CompressionMetric {
     let start_time = Instant::now();
 
-    let mut codec = new_codec(text, algorithm.clone())?;
+    let mut codec = new_codec(text, algorithm.clone()).expect("codec should not be none");
     codec.encode();
     codec.decode();
 
@@ -22,5 +20,5 @@ pub fn compute_algorithm(
         start_time,
     );
 
-    Ok(metric)
+    metric
 }

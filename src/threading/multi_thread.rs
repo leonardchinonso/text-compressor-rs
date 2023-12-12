@@ -1,18 +1,15 @@
-use crate::service::{
-    algorithms::Algorithm, io::new_codec, models::compression_metric::CompressionMetric,
-    models::part::Part,
+use crate::{
+    models::{compression_metric::CompressionMetric, part::Part},
+    service::{algorithms::Algorithm, io::new_codec},
+    utils::utils::split_into_parts,
 };
-use crate::utils::utils::split_into_parts;
 use std::error::Error;
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
 use std::time::Instant;
 
 /// compute_algorithm benchmarks how long a particular algorithm took to run
-pub fn compute_algorithm(
-    text: String,
-    algorithm: Algorithm,
-) -> Result<CompressionMetric, Box<dyn Error>> {
+pub fn compute_algorithm(text: String, algorithm: Algorithm) -> CompressionMetric {
     // start the timer for benchmarking the time spent
     let start_time = Instant::now();
     let parts = split_into_parts(text);
@@ -32,19 +29,19 @@ pub fn compute_algorithm(
         let algo = algorithm.clone();
 
         let handle = thread::spawn(move || {
-            let mut codec = new_codec(part.1.clone(), algo).unwrap();
+            let mut codec = new_codec(part.1.clone(), algo).expect("codec should not be none");
 
             // encode the text part and send the compressed data to the compressed channel
             codec.encode();
             compressed_tx_clone
                 .send(Part(part.0, codec.compressed()))
-                .unwrap();
+                .expect("compressed data should be sent to the compressed transmitter");
 
             // decode the encoded part and send the decompressed data to the decompressed channel
             codec.decode();
             decompressed_tx_clone
                 .send(Part(part.0, codec.decompressed()))
-                .unwrap();
+                .expect("decompressed data should be sent to the decompressed transmitter");
         });
         handles.push(handle);
     }
@@ -100,5 +97,5 @@ pub fn compute_algorithm(
 
     let metric = CompressionMetric::new(algorithm, encoded_result, decoded_result, start_time);
 
-    Ok(metric)
+    metric
 }

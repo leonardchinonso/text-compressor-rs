@@ -1,5 +1,5 @@
-use std::time::{Duration, Instant};
 use crate::service::algorithms::Algorithm;
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone)]
 pub struct CompressionMetric {

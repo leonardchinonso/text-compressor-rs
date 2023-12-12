@@ -1,7 +1,6 @@
 use clap::Parser;
 use std::fmt::Debug;
 
-
 #[derive(Parser, Debug, Default, Clone)]
 #[clap(author = "Author Name", version, about)]
 /// A text compressor
@@ -12,7 +11,6 @@ pub struct Argument {
     #[clap(short, long, action)]
     multithread: bool,
 }
-
 
 impl Argument {
     pub fn file_name(&self) -> String {

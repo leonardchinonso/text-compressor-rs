@@ -1,8 +1,8 @@
-use actix_cors::Cors;
-use actix_web::{App, http, HttpServer, middleware, web};
 use crate::api;
 use crate::threading::Threader;
-
+use actix_cors::Cors;
+use actix_web::{http, middleware, web, App, HttpServer};
+use log::info;
 
 // AppState holds the state of the application
 pub struct AppState {
@@ -16,7 +16,6 @@ impl AppState {
     }
 }
 
-
 // ServiceManager is the struct for managing services
 pub struct ServiceManager {
     pub threader: Threader,
@@ -24,21 +23,20 @@ pub struct ServiceManager {
 
 impl ServiceManager {
     pub fn new() -> Self {
-        Self {
-            threader: Threader::new(),
-        }
+        let threader = Threader::new();
+        Self { threader }
     }
 }
 
-
 // start_server starts and launches the http server
-pub async fn start_server(server_address: String, port: u16) -> Result<(), std::io::Error> {
+pub async fn start_server(host: &str, port: u16) -> Result<(), std::io::Error> {
     HttpServer::new(move || {
         // get the handle for the service manager
         let service_manager = ServiceManager::new();
 
         // initialize cors for the resource gate keeping
-        let _cors_middleware = Cors::default().allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
+        let _cors_middleware = Cors::default()
+            .allowed_methods(vec!["GET", "POST", "DELETE", "PUT"])
             .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
             .allowed_header(http::header::CONTENT_TYPE)
             .max_age(3600);
@@ -48,5 +46,8 @@ pub async fn start_server(server_address: String, port: u16) -> Result<(), std::
             .wrap(middleware::Logger::default())
             .app_data(web::Data::new(AppState::new(service_manager)))
             .configure(api::init)
-    }).bind((server_address, port))?.run().await
+    })
+    .bind((host, port))?
+    .run()
+    .await
 }
