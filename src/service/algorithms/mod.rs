@@ -1,10 +1,10 @@
-use std::fmt::{Debug, Display, Formatter};
-
 pub mod burrows_wheeler_run_length;
 pub mod burrows_wheeler_transform;
 pub mod huffman;
 pub mod lempel_ziv_welch;
 pub mod run_length_encoding;
+
+use std::fmt::{Debug, Display, Formatter};
 
 #[derive(Clone)]
 pub enum Algorithm {
@@ -66,7 +66,7 @@ impl PartialEq for Algorithm {
 
 #[cfg(test)]
 mod test {
-    use crate::algorithms::Algorithm;
+    use super::Algorithm;
 
     #[test]
     fn algorithm_default_works() {

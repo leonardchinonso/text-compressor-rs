@@ -1,8 +1,9 @@
-use crate::pkg::traits::Codec;
-
-use super::{
-    burrows_wheeler_transform::quadratic_log::BurrowsWheelerTransform,
-    run_length_encoding::RunLengthEncoding,
+use crate::service::{
+    algorithms::{
+        burrows_wheeler_transform::quadratic_log::BurrowsWheelerTransform,
+        run_length_encoding::RunLengthEncoding,
+    },
+    pkg::traits::Codec,
 };
 
 pub struct BurrowsWheelerRunLength {

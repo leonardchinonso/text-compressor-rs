@@ -1,4 +1,4 @@
-use crate::pkg::traits::{Reader, Writer};
+use crate::service::pkg::traits::{Reader, Writer};
 use std::error::Error;
 use std::fmt::{Debug, Formatter};
 use std::fs;
@@ -53,7 +53,7 @@ impl Writer for File {
 
 #[cfg(test)]
 mod test {
-    use crate::pkg::traits::{Reader, Writer};
+    use crate::service::pkg::traits::{Reader, Writer};
     use log::info;
 
     #[test]

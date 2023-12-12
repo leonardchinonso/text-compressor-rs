@@ -1,7 +1,7 @@
 pub mod quadratic_log {
     use std::collections::VecDeque;
 
-    use crate::pkg::traits::Codec;
+    use crate::service::pkg::traits::Codec;
 
     /// Rotation represents a rotation of a string at an index
     #[derive(Debug)]

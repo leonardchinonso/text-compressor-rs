@@ -1,4 +1,3 @@
-use crate::algorithms::Algorithm;
 use clap::Parser;
 use std::fmt::Debug;
 
@@ -45,7 +44,6 @@ mod test {
     #[test]
     fn parsing_argument_works() {
         let file_name = "dummy.txt".to_string();
-        let algorithm = Algorithm::Bwt;
         let multithread = true;
 
         let args = Argument {
