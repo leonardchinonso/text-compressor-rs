@@ -17,6 +17,20 @@ pub enum Algorithm {
     Invalid,
 }
 
+impl Algorithm {
+    pub fn format(&self) -> String {
+        match self {
+            Algorithm::Rle => "Run Length Encoding".to_string(),
+            Algorithm::Huffman => "Huffman Encoding".to_string(),
+            Algorithm::Bwt => "Burrows Wheeler Transform".to_string(),
+            Algorithm::Lzw => "Lempel Ziv Welch".to_string(),
+            Algorithm::BwtRle => "Burrows Wheeler Run Length".to_string(),
+            Algorithm::All => "ALL".to_string(),
+            Algorithm::Invalid => "invalid".to_string(),
+        }
+    }
+}
+
 impl Debug for Algorithm {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.to_string())

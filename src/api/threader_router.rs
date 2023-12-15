@@ -7,13 +7,18 @@ use actix_web::{
     web::{self, Json},
     HttpResponse, Responder,
 };
+use log::error;
 
 #[post("/v1/single-thread")]
 pub async fn benchmark_single_thread(
     app_data: web::Data<server::AppState>,
     request: Json<CompressRequest>,
 ) -> impl Responder {
+    println!("Compress Request: {:?}", request);
+
     if let Err(err) = request.validate() {
+        let err_msg = err.message.clone();
+        println!("Request validation failed: {:?}", err_msg);
         return err.to_responder();
     }
 

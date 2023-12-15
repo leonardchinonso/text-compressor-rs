@@ -13,6 +13,8 @@ pub fn compute_algorithm(text: String, algorithm: Algorithm) -> CompressionMetri
     codec.encode();
     codec.decode();
 
+    println!("Algorithm: {:?}", algorithm);
+
     let metric = CompressionMetric::new(
         algorithm,
         codec.compressed(),

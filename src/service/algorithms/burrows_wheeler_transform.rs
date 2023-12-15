@@ -138,3 +138,46 @@ pub mod quadratic_log {
         }
     }
 }
+
+
+#[cfg(test)]
+mod test {
+    use crate::service::pkg::traits::Codec;
+
+    use super::quadratic_log::BurrowsWheelerTransform;
+
+    #[test]
+    fn compression_works() {
+        let text = String::from("Body.tsx:71 
+        POST http://localhost:3000/api/generate 500 (Internal Server Error)
+       Body.tsx:93 Compression Metrics:  
+       Body.tsx:71 
+        POST http://localhost:3000/api/generate 500 (Internal Server Error)
+       Body.tsx:93 Compression Metrics:  
+       0
+       : 
+       {key: '0', algorithm: 'Run Length Encoding', timeTaken: 0, bitRate: 29, compressionRatio: 0.034482758620689655,}
+       1
+       : 
+       {key: '1', algorithm: 'Lempel Ziv Welch', timeTaken: 0, bitRate: 3.857142857142857, compressionRatio: 0.25925925925925924,}
+       2
+       : 
+       {key: '2', algorithm: 'Burrows Wheeler Transform', timeTaken: 0, bitRate: 1.1428571428571428, compressionRatio: 0.875,}
+       3
+       : 
+       {key: '3', algorithm: 'Huffman Encoding', timeTaken: 0, bitRate: 1.7142857142857142, compressionRatio: 0.5833333333333334, }
+       4
+       : 
+       {key: '4', algorithm: 'Burrows Wheeler Run Length', timeTaken: 0, bitRate: 28.857142857142858, compressionRatio: 0.034653465346534656,}
+       length
+       : 
+       5");
+
+       let mut bwt = BurrowsWheelerTransform::new(text.clone());
+
+       bwt.encode();
+       bwt.decode();
+
+       assert_eq!(bwt.decompressed(), text);
+    }
+}

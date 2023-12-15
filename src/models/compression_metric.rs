@@ -20,6 +20,8 @@ impl CompressionMetric {
         decoded: String,
         start_time: Instant,
     ) -> Self {
+        println!("Encoded: {:?}", encoded);
+        println!("Decoded: {:?}", decoded);
         if encoded.is_empty() || decoded.is_empty() {
             panic!("encoded and decoded text should not be empty");
         }
@@ -34,7 +36,7 @@ impl CompressionMetric {
         let input_size = decoded.len() as u64;
 
         Self {
-            algorithm: algorithm.to_string(),
+            algorithm: algorithm.format(),
             input_size,
             encoded,
             decoded,
