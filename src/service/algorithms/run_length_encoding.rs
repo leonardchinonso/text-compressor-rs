@@ -1,15 +1,31 @@
 use crate::service::pkg::traits::Codec;
-use std::fmt::Display;
+use std::fmt::{Debug, Display, Formatter};
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 struct RunLengthEncodingPart(u8, u64);
 
+// impl Debug for RunLengthEncodingPart {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+//         write!(
+//             f,
+//             "{}-{}",
+//             (self.0 as char).to_string(), self.1 as usize
+//         )
+//     }
+// }
+
+impl RunLengthEncodingPart {
+    fn decoded_format(&self) -> String {
+        (self.0 as char).to_string().repeat(self.1 as usize)
+    }
+}
+
 impl Display for RunLengthEncodingPart {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{}",
-            (self.0 as char).to_string().repeat(self.1 as usize)
+            "({}{})",
+            (self.0 as char).to_string(), self.1 as usize
         )
     }
 }
@@ -55,14 +71,14 @@ impl Codec for RunLengthEncoding {
     /// decode decompresses a given compressed text to get the original text
     fn decode(&mut self) {
         for part in self.encoded.iter() {
-            self.decoded.push_str(part.to_string().as_str());
+            self.decoded.push_str(part.decoded_format().as_str());
         }
     }
 
     fn compressed(&self) -> String {
         let mut s = String::new();
         for part in self.encoded.iter() {
-            s.push_str(format!("{part:?}").as_str());
+            s.push_str(part.to_string().as_str());
         }
         s
     }
