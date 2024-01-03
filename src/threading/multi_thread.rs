@@ -29,7 +29,8 @@ pub fn compute_algorithm(text: String, algorithm: Algorithm) -> CompressionMetri
         let algo = algorithm.clone();
 
         let handle = thread::spawn(move || {
-            let mut codec = new_codec(part.1.clone(), algo).expect("codec should not be none");
+            let mut codec = new_codec(part.1.clone(), algo)
+                .expect("codec should not be none");
 
             // encode the text part and send the compressed data to the compressed channel
             codec.encode();

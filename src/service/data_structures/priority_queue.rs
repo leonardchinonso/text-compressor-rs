@@ -23,6 +23,37 @@ impl<T: ToString> Debug for Heap<T> {
 }
 
 impl<T: Ord> Heap<T> {
+    /// bubble_up moves a node up the heap if it is greater than its parents
+    fn bubble_up(&mut self, index: usize) {
+        if index == 0 {
+            return;
+        }
+
+        let parent = Self::get_parent(index);
+        if self.vector[parent] < self.vector[index] {
+            self.vector.swap(parent, index);
+            self.bubble_up(parent);
+        }
+    }
+
+    /// bubble_down moves a node down the heap to its proper position
+    fn bubble_down(&mut self, index: usize, boundary: usize) {
+        let (left_child_idx, right_child_idx) = Self::get_children(index);
+
+        let mut candidate = index;
+        if left_child_idx < boundary && self.vector[left_child_idx] > self.vector[candidate] {
+            candidate = left_child_idx
+        }
+        if right_child_idx < boundary && self.vector[right_child_idx] > self.vector[candidate] {
+            candidate = right_child_idx
+        }
+
+        if candidate != index {
+            self.vector.swap(candidate, index);
+            self.bubble_down(candidate, boundary);
+        }
+    }
+
     /// new initializes a new heap
     pub fn new() -> Self {
         Self { vector: Vec::new() }
@@ -73,35 +104,6 @@ impl<T: Ord> Heap<T> {
             self.bubble_down(0, index)
         }
         self.vector
-    }
-
-    fn bubble_down(&mut self, index: usize, boundary: usize) {
-        let (left_child_idx, right_child_idx) = Self::get_children(index);
-
-        let mut candidate = index;
-        if left_child_idx < boundary && self.vector[left_child_idx] > self.vector[candidate] {
-            candidate = left_child_idx
-        }
-        if right_child_idx < boundary && self.vector[right_child_idx] > self.vector[candidate] {
-            candidate = right_child_idx
-        }
-
-        if candidate != index {
-            self.vector.swap(candidate, index);
-            self.bubble_down(candidate, boundary);
-        }
-    }
-
-    fn bubble_up(&mut self, index: usize) {
-        if index == 0 {
-            return;
-        }
-
-        let parent = Self::get_parent(index);
-        if self.vector[parent] < self.vector[index] {
-            self.vector.swap(parent, index);
-            self.bubble_up(parent);
-        }
     }
 
     fn get_parent(index: usize) -> usize {

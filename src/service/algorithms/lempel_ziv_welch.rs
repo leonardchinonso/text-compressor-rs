@@ -138,3 +138,4 @@ impl Codec for LempelZivWelch {
         self.decoded.clone()
     }
 }
+

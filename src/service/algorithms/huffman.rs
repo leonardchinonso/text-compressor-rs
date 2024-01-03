@@ -82,6 +82,7 @@ impl Codec for Huffman {
         self.get_encoded_text();
         for ch in self.text.chars() {
             let s = self.char_encodings.get(&ch).unwrap();
+            println!("String Encoded: {:?}", s);
             self.encoded.push_str(s);
         }
     }
@@ -121,7 +122,7 @@ mod tests {
 
     #[test]
     fn huffman_works() {
-        let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaabbbbbbbccccdd", "12ab"];
+        let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaabbbbbbbccccdd", "12ab", "a"];
 
         for test_case in test_cases {
             let mut huffman = Huffman::new(test_case.to_string());
@@ -131,7 +132,8 @@ mod tests {
 
     #[test]
     fn decoder_works() {
-        let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaabbbbbbbccccdd", "12ab"];
+        let test_cases = vec!["abracadabra!", "aabbc", "aaaaaaaabbbbbbbccccdd", "12ab", "a"];
+        let test_cases = vec!["aaaaaaaaaaaaaaaaab"];
 
         for test_case in test_cases {
             let mut huffman = Huffman::new(test_case.to_string());

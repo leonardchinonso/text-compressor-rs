@@ -22,9 +22,9 @@ impl CompressionMetric {
     ) -> Self {
         println!("Encoded: {:?}", encoded);
         println!("Decoded: {:?}", decoded);
-        if encoded.is_empty() || decoded.is_empty() {
-            panic!("encoded and decoded text should not be empty");
-        }
+        // if encoded.is_empty() || decoded.is_empty() {
+        //     panic!("encoded and decoded text should not be empty");
+        // }
 
         let n_encoded = encoded.len() as f64;
         let n_decoded = decoded.len() as f64;

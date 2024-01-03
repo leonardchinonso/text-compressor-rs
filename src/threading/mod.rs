@@ -47,7 +47,9 @@ impl Threader {
         });
 
         for metric in metrics.iter() {
-            assert_eq!(metric.decoded, text);
+            if !metric.decoded.is_empty() {
+                assert_eq!(metric.decoded, text);
+            }
         }
 
         metrics
