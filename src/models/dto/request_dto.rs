@@ -10,6 +10,13 @@ pub struct CompressRequest {
 }
 
 impl CompressRequest {
+    pub fn new(text: String, multithread: bool) -> Self {
+        Self {
+            text,
+            multithread
+        }
+    }
+
     pub fn validate(&self) -> Result<(), AppError> {
         if self.text.is_empty() {
             return Err(AppError::new(
@@ -21,7 +28,7 @@ impl CompressRequest {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct CompressResponse {
     pub algorithm: String,
     pub input_size: u64,

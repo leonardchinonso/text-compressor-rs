@@ -1,9 +1,10 @@
-use crate::server::start_server;
+use crate::server::{start_cli, start_server};
 use clap::Parser;
 use dotenv::dotenv;
 use log::info;
 use std::env;
 use std::error::Error;
+use crate::service::io::args::Argument;
 
 mod api;
 mod errors;
@@ -24,7 +25,10 @@ async fn main() -> Result<(), std::io::Error> {
         .expect("PORT must be set in env")
         .parse::<u16>()
         .expect("invalid port number");
+    let file_name = env::var("FILE_NAME").ok();
 
-    // start the server
-    start_server(&host, port).await
+    match file_name {
+        Some(file_name) => start_cli(file_name),
+        None => start_server(&host, port).await
+    }
 }
