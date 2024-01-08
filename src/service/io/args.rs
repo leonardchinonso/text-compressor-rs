@@ -10,6 +10,9 @@ pub struct Argument {
     /// multi-thread support. It is false by default
     #[clap(short, long, action)]
     multithread: bool,
+    /// whether to use the rest API or CLI
+    #[clap(short, long, action)]
+    cli: bool,
 }
 
 impl Argument {
@@ -19,6 +22,10 @@ impl Argument {
 
     pub fn should_multithread(&self) -> bool {
         self.multithread
+    }
+
+    pub fn use_cli(&self) -> bool {
+        self.cli
     }
 
     /// validate_file_name checks that the file name is a valid one and eats whitespaces
@@ -45,13 +52,16 @@ mod test {
     fn parsing_argument_works() {
         let file_name = "dummy.txt".to_string();
         let multithread = true;
+        let cli = true;
 
         let args = Argument {
             file_name: file_name.clone(),
             multithread,
+            cli,
         };
 
         assert_eq!(args.file_name, file_name);
         assert_eq!(args.multithread, multithread);
+        assert_eq!(args.cli, cli);
     }
 }

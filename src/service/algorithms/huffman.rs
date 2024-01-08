@@ -82,7 +82,6 @@ impl Codec for Huffman {
         self.get_encoded_text();
         for ch in self.text.chars() {
             let s = self.char_encodings.get(&ch).unwrap();
-            println!("String Encoded: {:?}", s);
             self.encoded.push_str(s);
         }
     }

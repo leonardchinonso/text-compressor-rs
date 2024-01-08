@@ -1,6 +1,7 @@
 use actix_web::web;
 
 pub mod threader_router;
+pub mod threader_cli;
 
 // init configures routes for the application
 pub fn init(cfg: &mut web::ServiceConfig) {

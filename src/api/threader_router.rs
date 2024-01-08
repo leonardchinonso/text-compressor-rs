@@ -14,8 +14,6 @@ pub async fn benchmark_single_thread(
     app_data: web::Data<server::AppState>,
     request: Json<CompressRequest>,
 ) -> impl Responder {
-    println!("Compress Request: {:?}", request);
-
     if let Err(err) = request.validate() {
         let err_msg = err.message.clone();
         println!("Request validation failed: {:?}", err_msg);
@@ -30,6 +28,8 @@ pub async fn benchmark_single_thread(
         .into_iter()
         .map(|metric| CompressResponse::from(metric))
         .collect::<Vec<CompressResponse>>();
+
+    println!("Compression Metrics: {:?}", compress_responses);
 
     // return the metric as a response to the client
     HttpResponse::Ok().json(APIResponse::success(
